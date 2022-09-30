@@ -42,6 +42,10 @@ head(mort_data)
 colnames(mort_data) <- str_to_lower(colnames(mort_data))
 head(mort_data)
 
+#interested in knowing categories of mortality
+unique(mort_data$cause_desc)
+unique(mort_data$year)
+
 #note "strata" and "strata_name" may have categories we want to pull out at some point
 ```
 \newpage
@@ -108,16 +112,14 @@ Includes 53,592 observations with 6 variables.
 
 #### How does the dataset relate to the group problem statement and question?
 
-
-
-\newpage
-
 # Identify data types for 5+ data elements/columns/variables
 ### 1. 
 ### 2. 
 ### 3. 
 ### 4. 
 ### 5.   
+### 6.   
+### 7.   
 
 ## Utilize functions or resources in RStudio to determine the types of each data 
 ## element (i.e. character, numeric, factor)
@@ -126,6 +128,9 @@ Includes 53,592 observations with 6 variables.
 ### 3. 
 ### 4. 
 ### 5. 
+### 6.   
+### 7.   
+\newpage
 
 ## Identify the desired type/format for each variable—will you need to convert 
 ## any columns to numeric or another type? 
@@ -134,6 +139,8 @@ Includes 53,592 observations with 6 variables.
 ### 3. 
 ### 4. 
 ### 5.   
+### 6.   
+### 7.   
 
 ## Provide a basic description of the 5+ data elements (Numeric: mean, median, 
 ## range; Character: unique values/categories)
@@ -142,5 +149,7 @@ Includes 53,592 observations with 6 variables.
 ### 3. 
 ### 4. 
 ### 5. 
+### 6.   
+### 7.   
 
 
