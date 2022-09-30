@@ -1,0 +1,62 @@
+---
+title: "R Project Milestone 2"
+author: "Moyra Rasheed"
+date: '2022-09-30'
+output:
+  pdf_document: default
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(readr)
+```
+
+```{r}
+Demo<-read.csv("https://raw.githubusercontent.com/PHW290/phw251_projectdata/main/ca_county_demographic.csv",stringsAsFactors = FALSE,)
+Mort<-read.csv("https://raw.githubusercontent.com/PHW290/phw251_projectdata/main/ca_county_mortality.csv",stringsAsFactors = FALSE,na.strings = "")
+HCAI<-read.csv("https://raw.githubusercontent.com/PHW290/phw251_projectdata/main/hcai_healthcare_construction.csv",stringsAsFactors = FALSE,na.strings = "")
+```
+
+This is a team assignment; each team should complete and turn in a PDF created from an Rmd via Github. Please include code and output for the following components:
+
+Description of dataset
+What is the data source? (1-2 sentences on where the data is coming from, dates included, etc.)
+1.Demographic: Census Data
+2. HCAI: Ca open data portal--> Department of healthcare access and information
+3.Mortality: Ca open data portal<- California Department of Public Health 
+-------------------------------
+How does the dataset relate to the group problem statement and question?
+
+-----------------------------------
+
+Import statement
+NOTE: Please use datasets available in the PHW251 Project Data github repoLinks to an external site. (this is important to make sure everyone is using the same datasets)
+Use appropriate import function and package based on the type of file.
+Utilize function arguments to control relevant components (i.e. change column types, column names, missing values, etc.)
+
+
+
+--------------------------------------------------------------
+Document the import process.
+Demo<-read.csv("https://raw.githubusercontent.com/PHW290/phw251_projectdata/main/ca_county_demographic.csv")
+Mort<-read.csv("https://raw.githubusercontent.com/PHW290/phw251_projectdata/main/ca_county_mortality.csv")
+HCAI<-read.csv("https://raw.githubusercontent.com/PHW290/phw251_projectdata/main/hcai_healthcare_construction.csv")
+```
+
+--------------------------------------------------------------------
+
+
+Identify data types for 5+ data elements/columns/variables
+Identify 5+ data elements required for your specified scenario. If <5 elements are required to complete the analysis, please choose additional variables of interest in the data set to explore in this milestone.
+Utilize functions or resources in RStudio to determine the types of each data element (i.e. character, numeric, factor)
+Identify the desired type/format for each variable—will you need to convert any columns to numeric or another type? 
+Provide a basic description of the 5+ data elements
+Numeric: mean, median, range
+Character:  unique values/categories
+Or any other descriptives that will be useful to the analysis
+
+
+ 
