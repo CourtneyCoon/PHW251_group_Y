@@ -51,12 +51,16 @@ HCAI<-read.csv("https://raw.githubusercontent.com/PHW290/phw251_projectdata/main
 
 Identify data types for 5+ data elements/columns/variables
 Identify 5+ data elements required for your specified scenario. If <5 elements are required to complete the analysis, please choose additional variables of interest in the data set to explore in this milestone.
+--------------------------
+
 Utilize functions or resources in RStudio to determine the types of each data element (i.e. character, numeric, factor)
+
+-------------------------------
 Identify the desired type/format for each variable—will you need to convert any columns to numeric or another type? 
 Provide a basic description of the 5+ data elements
 Numeric: mean, median, range
 Character:  unique values/categories
 Or any other descriptives that will be useful to the analysis
 
-
+-----------------------------------------------------------
  
