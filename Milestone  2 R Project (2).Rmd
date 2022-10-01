@@ -14,7 +14,7 @@ library(tidyverse)
 library(readr)
 library(dplyr)
 library(stringr)
-#ok 
+ 
 ```
 
 
@@ -27,6 +27,13 @@ demo_data<-read.csv(
 str(demo_data)
 #data is clean and ready to use
 ```
+
+# The question I have(Moyra  : are we supposed to drop the rest of the columns that are not required? or do we keep all of them ? 
+#The ones that we need" low population per square mile "pop12-sqm1'
+#Med-age
+#renters and homeowners (A high proportion of renters versus homeowners - we need to make a third variable )
+
+
 \newpage
 
 ## mortality dataset
@@ -98,8 +105,16 @@ head(healthcare_data)
 \newpage
 
 # Description of dataset
+All 3 data sets are CSV files. 
+
+
 ## What is the data source? How does the dataset relate to the group problem 
+1.Demographic : Census
+2.Mortality :(Ca open data Portal) California Department of Public Health 
+3.HCAI:(Ca Open data portal) Department of Healthcare and Access information. 
 ## statement and question?
+
+
 ### 1. Demographic: Census Data
 Includes 58 observations with 22 variables. All are numeric or integers except
 for the first column which is a character with county names.
