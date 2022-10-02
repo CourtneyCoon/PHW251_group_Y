@@ -74,6 +74,8 @@ colnames(healthcare_data) <- str_to_lower(colnames(healthcare_data))
 head(healthcare_data)
 
 ```
+
+
 \newpage
 ## HCAI Healthcare dataset con't
 ```{r}
@@ -109,12 +111,7 @@ All 3 data sets are CSV files.
 
 
 ## What is the data source? How does the dataset relate to the group problem 
-1.Demographic : Census
-2.Mortality :(Ca open data Portal) California Department of Public Health 
-3.HCAI:(Ca Open data portal) Department of Healthcare and Access information. 
 ## statement and question?
-
-
 ### 1. Demographic: Census Data
 Includes 58 observations with 22 variables. All are numeric or integers except
 for the first column which is a character with county names.
@@ -127,10 +124,12 @@ year and count of mortality.
 Includes 53,592 observations with 6 variables. 
 
 #### How does the dataset relate to the group problem statement and question?
+Allocated funding for vulnerable populations in California . 
+Certain regions in California are considered to be vulnerable populations. Given that they need access to better funding, thereby providing access to better healthcare , we are able to allocate funds to certain regions . By utilizing all 3 data sets , we can fucus on rural populations , seniors and renters , higher mortality rate and the counties that have average or below average funding available in the last 5 years.  
 
 # Identify data types for 5+ data elements/columns/variables
-### 1. 
-### 2. 
+### 1. Demographic Data : Name: Chr/pop12_sqmi:num/owner_occ:int/renter_occ: int
+### 2. HCAI healthcare: county: chr/data_generation_date:chr/oshph_project_status: chr
 ### 3. 
 ### 4. 
 ### 5.   
@@ -150,8 +149,8 @@ Includes 53,592 observations with 6 variables.
 
 ## Identify the desired type/format for each variable—will you need to convert 
 ## any columns to numeric or another type? 
-### 1. 
-### 2. 
+### 1. Mortality Data set: dropped last 2 columns that comprised of mainly "NA's) 
+### 2. HCAI: changed "total_cost_projects" from chr to numeric 
 ### 3. 
 ### 4. 
 ### 5.   
