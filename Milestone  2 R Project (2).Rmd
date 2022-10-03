@@ -149,7 +149,7 @@ Certain regions in California are considered to be vulnerable populations. Given
 
   
 \newpage
--
+
 
 ## Identify the desired type/format for each variable—will you need to convert 
 ## any columns to numeric or another type? 
