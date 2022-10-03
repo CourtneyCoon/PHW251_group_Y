@@ -1,173 +1,59 @@
 ---
-title: "R Project Milestone 2"
-author: "Moyra Rasheed, Courtney Coon, Jarett Maycott"
-date: '2022-09-30'
-output:
-  pdf_document: default
-
+title: "Untitled"
+author: "Moyra Rasheed"
+date: '2022-10-02'
+output: html_document
 ---
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-
 library(tidyverse)
-library(readr)
-library(dplyr)
-library(stringr)
- 
+library(lubridate)
+library(nycflights13)
+
 ```
 
 
-# Importing data
-## demographic dataset
 ```{r}
-demo_data<-read.csv(
-  "https://raw.githubusercontent.com/PHW290/phw251_projectdata/main/ca_county_demographic.csv",
-                    stringsAsFactors = FALSE)
-str(demo_data)
-#data is clean and ready to use
+date()
+today()
+ymd()
+mdy("2022-02-10")
+ymd(20221002)
+as.Date("2022-02-10")
+ymd("2022-02-10")
+wday(datetime,label=TRUE,abbr=FALSE)
 ```
 
-# The question I have(Moyra  : are we supposed to drop the rest of the columns that are not required? or do we keep all of them ? 
-#The ones that we need" low population per square mile "pop12-sqm1'
-#Med-age
-#renters and homeowners (A high proportion of renters versus homeowners - we need to make a third variable )
 
-
-\newpage
-
-## mortality dataset
 ```{r}
-mort_data<-read.csv(
-  "https://raw.githubusercontent.com/PHW290/phw251_projectdata/main/ca_county_mortality.csv",
-                    stringsAsFactors = FALSE,na.strings = "")
-
-#remove last 2 columns b/c mostly NAs ("Annotation_...")
-mort_data<-mort_data[,1:8]
-head(mort_data)
-
-#column names are all capitalized
-colnames(mort_data) <- str_to_lower(colnames(mort_data))
-head(mort_data)
-
-#interested in knowing categories of mortality
-unique(mort_data$cause_desc)
-unique(mort_data$year)
-
-#note "strata" and "strata_name" may have categories we want to pull out at some point
+flights%>%
+  select(year,month, day , hour, minutes)
 ```
-\newpage
 
 
-## HCAI Healthcare dataset
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
 ```{r}
-healthcare_data<-read.csv(
-  "https://raw.githubusercontent.com/PHW290/phw251_projectdata/main/hcai_healthcare_construction.csv",
-  stringsAsFactors = FALSE,na.strings = "")
+today()
 
-#remove last column ("Collection.of.Counties") b/c mostly NAs
-healthcare_data<-healthcare_data[,1:5]
-head(healthcare_data)
-
-#column names are all capitalized
-colnames(healthcare_data) <- str_to_lower(colnames(healthcare_data))
-head(healthcare_data)
-
+date()
 ```
 
+## Including Plots
 
-\newpage
-## HCAI Healthcare dataset con't
-```{r}
-#change "." to "_" for consistency with other datasets
-names(healthcare_data) <- gsub(x = names(healthcare_data), pattern = "\\.", 
-                               replacement = "_")  
-head(healthcare_data)
+You can also embed plots, for example:
 
-#change county names to match other two datasets (remove numbers in front)
-healthcare_data<-healthcare_data%>%
-  mutate(county=substring(healthcare_data$county, 6))
-head(healthcare_data)
+```{r pressure, echo=FALSE}
+plot(pressure)
 ```
-\newpage
-## HCAI Healthcare dataset con't
-```{r}
-#change money column ("Total.Costs...") to numeric
-healthcare_data<-healthcare_data%>%
-  mutate(total_costs_of_oshpd_projects = total_costs_of_oshpd_projects %>% 
-           str_remove_all("[$,]"))
-healthcare_data$total_costs_of_oshpd_projects<-as.numeric(healthcare_data$total_costs_of_oshpd_projects)
-head(healthcare_data)
 
-#fix "data_generation_date" (remove empty time)
-healthcare_data$data_generation_date<-as.Date(healthcare_data$data_generation_date)
-head(healthcare_data)
-
-```
-#Jarrett/Moyra: do we just need closures for oshpd project status ? 
-
-\newpage
-
-# Description of dataset
-All 3 data sets are CSV files. 
-
-
-## What is the data source? How does the dataset relate to the group problem 
-## statement and question?
-### 1. Demographic: Census Data
-Includes 58 observations with 22 variables. All are numeric or integers except
-for the first column which is a character with county names.
-
-### 2. Mortality: CA open data portal, California Department of Public Health 
-Includes 147,784 observations with 10 variables. most are characters except for 
-year and count of mortality.
-
-### 3. Healthcare: CA open data portal, Department of Healthcare Access and Information
-Includes 53,592 observations with 5 variables. 
-
-#### How does the dataset relate to the group problem statement and question?
-Allocated funding for healthcare  for vulnerable populations in California . 
-Certain regions in California are considered to be vulnerable populations. Given that they need access to better funding, thereby providing access to better healthcare , we are able to allocate funds to certain regions . By utilizing all 3 data sets , we can focus on rural populations , seniors and renters , higher mortality rate and the counties that have average or below average funding available in the last 5 years.  
-
-# Identify data types for 5+ data elements/columns/variables
-#Identify 5+ data elements required for your specified scenario. If <5 elements are required to complete the analysis, please choose additional variables of interest in the data set to explore in this milestone.
-### 1. Demographic Data : Population /:Type-Chr 
-### 2. Demographic Data :name: /Type: Chr
-### 3:Demographic: median_age/Type: Num
-### 4.Demographics: Renter/Type: Num
-### 5.Dermographics: Homeowner/Type:Num
-### 6. Mortality: county: chr
-### 7. Mortality: year: Type: chr
-### 8. Mortality: Cause Mortality :Type:  chr
-### 9. Mortality: Count: Type: chr
-### 10.HCAI healthcare: oshph_project_status: Type: chr
-### 11.HCAI healthcare: Date:Type: chr
-### 12.HCAI healthcare: Total Costs:Type:Num
-### 13.HCAI healthcare:County:Type:chr
-###14.HCAI healthcare:: No of Oshpd projects:Type: Num
-
-
-  
-\newpage
-
-## Identify the desired type/format for each variable—will you need to convert 
-## any columns to numeric or another type? 
-### 1. Mortality Data set: dropped last 2 columns that comprised of mainly "NA's) 
-### 2. HCAI: changed "total_cost_projects" from chr to numeric 
-### 3. 
-### 4. 
-### 5.   
-### 6.   
-### 7.   
-
-## Provide a basic description of the 5+ data elements (Numeric: mean, median, 
-## range; Character: unique values/categories)
-### 1. 
-### 2. 
-### 3. 
-### 4. 
-### 5. 
-### 6.   
-### 7.   
-
-
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
