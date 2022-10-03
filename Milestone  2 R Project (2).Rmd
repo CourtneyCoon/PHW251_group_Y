@@ -104,6 +104,8 @@ healthcare_data$data_generation_date<-as.Date(healthcare_data$data_generation_da
 head(healthcare_data)
 
 ```
+#Jarrett/Moyra: do we just need closures for oshpd project status ? 
+
 \newpage
 
 # Description of dataset
@@ -121,30 +123,31 @@ Includes 147,784 observations with 10 variables. most are characters except for
 year and count of mortality.
 
 ### 3. Healthcare: CA open data portal, Department of Healthcare Access and Information
-Includes 53,592 observations with 6 variables. 
+Includes 53,592 observations with 5 variables. 
 
 #### How does the dataset relate to the group problem statement and question?
-Allocated funding for vulnerable populations in California . 
-Certain regions in California are considered to be vulnerable populations. Given that they need access to better funding, thereby providing access to better healthcare , we are able to allocate funds to certain regions . By utilizing all 3 data sets , we can fucus on rural populations , seniors and renters , higher mortality rate and the counties that have average or below average funding available in the last 5 years.  
+Allocated funding for healthcare  for vulnerable populations in California . 
+Certain regions in California are considered to be vulnerable populations. Given that they need access to better funding, thereby providing access to better healthcare , we are able to allocate funds to certain regions . By utilizing all 3 data sets , we can focus on rural populations , seniors and renters , higher mortality rate and the counties that have average or below average funding available in the last 5 years.  
 
 # Identify data types for 5+ data elements/columns/variables
-### 1. Demographic Data : Name: Chr/pop12_sqmi:num/owner_occ:int/renter_occ: int
-### 2. HCAI healthcare: county: chr/data_generation_date:chr/oshph_project_status: chr
-### 3. 
-### 4. 
-### 5.   
-### 6.   
-### 7.   
+#Identify 5+ data elements required for your specified scenario. If <5 elements are required to complete the analysis, please choose additional variables of interest in the data set to explore in this milestone.
+### 1. Demographic Data : Population /:Type-Chr 
+### 2. Demographic Data :name: /Type: Chr
+### 3:Demographic: median_age/Type: Num
+### 4.Demographics: Renter/Type: Num
+### 5.Dermographics: Homeowner/Type:Num
+### 6. Mortality: county: chr
+### 7. Mortality: year: Type: chr
+### 8. Mortality: Cause Mortality :Type:  chr
+### 9. Mortality: Count: Type: chr
+### 10.HCAI healthcare: oshph_project_status: Type: chr
+### 11.HCAI healthcare: Date:Type: chr
+### 12.HCAI healthcare: Total Costs:Type:Num
+### 13.HCAI healthcare:County:Type:chr
+###14.HCAI healthcare:: No of Oshpd projects:Type: Num
 
-## Utilize functions or resources in RStudio to determine the types of each data 
-## element (i.e. character, numeric, factor)
-### 1. 
-### 2. 
-### 3. 
-### 4. 
-### 5. 
-### 6.   
-### 7.   
+
+  
 \newpage
 
 ## Identify the desired type/format for each variable—will you need to convert 
