@@ -28,12 +28,6 @@ str(demo_data)
 #data is clean and ready to use
 ```
 
-# The question I have(Moyra  : are we supposed to drop the rest of the columns that are not required? or do we keep all of them ? 
-#The ones that we need" low population per square mile "pop12-sqm1'
-#Med-age
-#renters and homeowners (A high proportion of renters versus homeowners - we need to make a third variable )
-
-
 \newpage
 
 ## mortality dataset
@@ -104,7 +98,6 @@ healthcare_data$data_generation_date<-as.Date(healthcare_data$data_generation_da
 head(healthcare_data)
 
 ```
-#Jarrett/Moyra: do we just need closures for oshpd project status ? 
 
 \newpage
 
@@ -131,20 +124,20 @@ Certain regions in California are considered to be vulnerable populations. Given
 
 # Identify data types for 5+ data elements/columns/variables
 #Identify 5+ data elements required for your specified scenario. If <5 elements are required to complete the analysis, please choose additional variables of interest in the data set to explore in this milestone.
-### 1. Demographic Data : Population /:Type-Chr 
-### 2. Demographic Data :name: /Type: Chr
-### 3:Demographic: median_age/Type: Num
-### 4.Demographics: Renter/Type: Num
-### 5.Dermographics: Homeowner/Type:Num
-### 6. Mortality: county: chr
+### 1. Demographic Data: demo_data$pop12_sqmi:Type-Chr 
+### 2. Demographic Data: name: /Type: Chr
+### 3. Demographic: median_age/Type: Num
+### 4. Demographics: Renter/Type: Num
+### 5. Demographics: Homeowner/Type:Num
+### 6. Mortality: county: Type:chr
 ### 7. Mortality: year: Type: chr
 ### 8. Mortality: Cause Mortality :Type:  chr
 ### 9. Mortality: Count: Type: chr
-### 10.HCAI healthcare: oshph_project_status: Type: chr
-### 11.HCAI healthcare: Date:Type: chr
-### 12.HCAI healthcare: Total Costs:Type:Num
-### 13.HCAI healthcare:County:Type:chr
-###14.HCAI healthcare:: No of Oshpd projects:Type: Num
+### 10. HCAI healthcare: oshph_project_status: Type: chr
+### 11. HCAI healthcare: Date:Type: chr
+### 12. HCAI healthcare: Total Costs:Type:Num
+### 13. HCAI healthcare: County:Type:chr
+### 14. HCAI healthcare: No of Oshpd projects:Type: Num
 
 
   
@@ -153,22 +146,17 @@ Certain regions in California are considered to be vulnerable populations. Given
 
 ## Identify the desired type/format for each variable—will you need to convert 
 ## any columns to numeric or another type? 
-### 1. Mortality Data set: dropped last 2 columns that comprised of mainly "NA's) 
-### 2. HCAI: changed "total_cost_projects" from chr to numeric 
-### 3. 
-### 4. 
-### 5.   
-### 6.   
-### 7.   
+### 1.HCAI: data_generation _date: from *** to date
+### 2.HCAI: changed "total_cost_projects" from chr to numeric 
+### 3. the remaining columns are in the apprpiate format.
+
 
 ## Provide a basic description of the 5+ data elements (Numeric: mean, median, 
 ## range; Character: unique values/categories)
-### 1. 
-### 2. 
-### 3. 
-### 4. 
-### 5. 
-### 6.   
-### 7.   
+```{r}
+summary(demo_data$pop12_sqmi)
+unique(healthcare_data$data_generation_date)
+
+```
 
 
