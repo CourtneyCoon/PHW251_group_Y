@@ -124,20 +124,22 @@ Certain regions in California are considered to be vulnerable populations. Given
 
 # Identify data types for 5+ data elements/columns/variables
 #Identify 5+ data elements required for your specified scenario. If <5 elements are required to complete the analysis, please choose additional variables of interest in the data set to explore in this milestone.
-### 1. Demographic Data: demo_data$pop12_sqmi:Type-Chr 
-### 2. Demographic Data: name: /Type: Chr
-### 3. Demographic: median_age/Type: Num
-### 4. Demographics: Renter/Type: Num
-### 5. Demographics: Homeowner/Type:Num
-### 6. Mortality: county: Type:chr
-### 7. Mortality: year: Type: chr
-### 8. Mortality: Cause Mortality :Type:  chr
-### 9. Mortality: Count: Type: chr
-### 10. HCAI healthcare: oshph_project_status: Type: chr
-### 11. HCAI healthcare: Date:Type: chr
-### 12. HCAI healthcare: Total Costs:Type:Num
-### 13. HCAI healthcare: County:Type:chr
-### 14. HCAI healthcare: No of Oshpd projects:Type: Num
+### 1. Demographic Data: demo_data$pop12_sqmi:Type-chr 
+### 2. Demographic Data: demo_data$name: /Type: chr
+### 3. Demographic: demo_data$med_age/Type: num
+### 4. Demographics: demo_data$renter_occ/Type: num
+### 5. Demographics: demo_data$owner_occ/Type:num
+### 6. Mortality: mort_data$county/ Type:chr
+### 7. Mortality: mort_data$year: Type: chr
+### 8. Mortality: mort_data$cause_desc :Type:  chr
+### 9. Mortality: mort_data$count: Type: num
+### 10. HCAI healthcare: healthcare_data$oshph_project_status: Type: chr
+### 11. HCAI healthcare: healthcare_data$data_generation_date:Type: chr
+### 12. HCAI healthcare:healthcare_data$total_costs_of_oshpd_projects:
+Type:num
+### 13. HCAI healthcare: healthcare_data$county:Type:chr
+### 14. HCAI healthcare: healthcare_data$number_of_oshpd_projects 
+:Type: num
 
 
   
@@ -151,11 +153,36 @@ Certain regions in California are considered to be vulnerable populations. Given
 ### 3. the remaining columns are in the apprpiate format.
 
 
-## Provide a basic description of the 5+ data elements (Numeric: mean, median, 
-## range; Character: unique values/categories)
 ```{r}
+#1 
 summary(demo_data$pop12_sqmi)
+#2 
+unique(demo_data$name)
+#3
+summary(demo_data$med_age)
+#4
+summary(demo_data$renter_occ)
+#5
+summary(demo_data$owner_occ)
+#6
+unique(mort_data$county)
+#7
+unique(mort_data$year)
+#8
+unique(mort_data$cause_desc)
+#9
+summary(mort_data$count)
+#10
+unique(healthcare_data$oshpd_project_status)
+#11
 unique(healthcare_data$data_generation_date)
+#12
+summary(healthcare_data$total_costs_of_oshpd_projects)
+#13
+unique(healthcare_data$county)
+#14
+summary(healthcare_data$number_of_oshpd_projects)
+       
 
 ```
 
