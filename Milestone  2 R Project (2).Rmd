@@ -43,7 +43,11 @@ head(mort_data)
 #column names are all capitalized
 colnames(mort_data) <- str_to_lower(colnames(mort_data))
 head(mort_data)
+```
 
+\newpage
+## mortality dataset con't
+```{r}
 #interested in knowing categories of mortality
 unique(mort_data$cause_desc)
 unique(mort_data$year)
@@ -119,71 +123,113 @@ year and count of mortality.
 Includes 53,592 observations with 5 variables. 
 
 #### How does the dataset relate to the group problem statement and question?
-Allocated funding for healthcare  for vulnerable populations in California . 
-Certain regions in California are considered to be vulnerable populations. Given that they need access to better funding, thereby providing access to better healthcare , we are able to allocate funds to certain regions . By utilizing all 3 data sets , we can focus on rural populations , seniors and renters , higher mortality rate and the counties that have average or below average funding available in the last 5 years.  
+Allocated funding for healthcare  for vulnerable populations in California. 
+Certain regions in California are considered to be vulnerable populations. 
+Given that they need access to better funding, thereby providing access to 
+better healthcare, we are able to allocate funds to certain regions. By 
+utilizing all 3 data sets, we can focus on rural populations, seniors and 
+renters, higher mortality rate and the counties that have average or below 
+average funding available in the last 5 years.  
 
-# Identify data types for 5+ data elements/columns/variables
-#Identify 5+ data elements required for your specified scenario. If <5 elements are required to complete the analysis, please choose additional variables of interest in the data set to explore in this milestone.
-### 1. Demographic Data: demo_data$pop12_sqmi:Type-chr 
-### 2. Demographic Data: demo_data$name: /Type: chr
-### 3. Demographic: demo_data$med_age/Type: num
-### 4. Demographics: demo_data$renter_occ/Type: num
-### 5. Demographics: demo_data$owner_occ/Type:num
-### 6. Mortality: mort_data$county/ Type:chr
-### 7. Mortality: mort_data$year: Type: chr
-### 8. Mortality: mort_data$cause_desc :Type:  chr
-### 9. Mortality: mort_data$count: Type: num
-### 10. HCAI healthcare: healthcare_data$oshph_project_status: Type: chr
-### 11. HCAI healthcare: healthcare_data$data_generation_date:Type: chr
-### 12. HCAI healthcare:healthcare_data$total_costs_of_oshpd_projects:
-Type:num
-### 13. HCAI healthcare: healthcare_data$county:Type:chr
-### 14. HCAI healthcare: healthcare_data$number_of_oshpd_projects 
-:Type: num
-
-
-  
 \newpage
+# Identify data types for 5+ data elements/columns/variables
+## Identify 5+ data elements required for your specified scenario. 
+## If <5 elements are required to complete the analysis, please choose 
+## additional variables of interest in the data set to explore in this milestone.
+1. Demographic Data: demo_data$pop12_sqmi: Type:chr 
+2. Demographic Data: demo_data$name: Type:chr
+3. Demographic: demo_data$med_age: Type:num
+4. Demographics: demo_data$renter_occ: Type:num
+5. Demographics: demo_data$owner_occ: Type:num
+6. Mortality: mort_data$county: Type:chr
+7. Mortality: mort_data$year: Type:chr
+8. Mortality: mort_data$cause_desc: Type: chr
+9. Mortality: mort_data$count: Type:num
+10. HCAI healthcare: healthcare_data$oshph_project_status: Type:chr
+11. HCAI healthcare: healthcare_data$data_generation_date: Type:chr
+12. HCAI healthcare:healthcare_data$total_costs_of_oshpd_projects: Type:num
+13. HCAI healthcare: healthcare_data$county: Type:chr
+14. HCAI healthcare: healthcare_data$number_of_oshpd_projects: Type:num
 
 
 ## Identify the desired type/format for each variable—will you need to convert 
 ## any columns to numeric or another type? 
-### 1.HCAI: data_generation _date: from *** to date
-### 2.HCAI: changed "total_cost_projects" from chr to numeric 
-### 3. the remaining columns are in the apprpiate format.
+### 1. HCAI: data_generation_date: change format from date-time to strictly date;
+### may need to change to year to merge data for Milestone #3
+### 2. HCAI: changed "total_cost_projects" from chr (string) to numeric 
+### by removing "$"
+### The remaining columns are in the appropiate format for now.
 
-
+\newpage
+# Provide a basic description of the 5+ data elements (Numeric: mean, median, 
+# range; Character: unique values/categories)
 ```{r}
-#1 
+#1: demo_data$pop12_sqmi
 summary(demo_data$pop12_sqmi)
-#2 
-unique(demo_data$name)
-#3
-summary(demo_data$med_age)
-#4
-summary(demo_data$renter_occ)
-#5
-summary(demo_data$owner_occ)
-#6
-unique(mort_data$county)
-#7
-unique(mort_data$year)
-#8
-unique(mort_data$cause_desc)
-#9
-summary(mort_data$count)
-#10
-unique(healthcare_data$oshpd_project_status)
-#11
-unique(healthcare_data$data_generation_date)
-#12
-summary(healthcare_data$total_costs_of_oshpd_projects)
-#13
-unique(healthcare_data$county)
-#14
-summary(healthcare_data$number_of_oshpd_projects)
-       
-
 ```
 
+```{r}
+#2: demo_data$name
+unique(demo_data$name)
+```
 
+```{r}
+#3: demo_data$name
+summary(demo_data$name)
+```
+
+```{r}
+#4: demo_data$renter_occ
+summary(demo_data$renter_occ)
+```
+
+```{r}
+#5: demo_data$owner_occ
+summary(demo_data$owner_occ)
+```
+
+\newpage
+```{r}
+#6: mort_data$county
+unique(mort_data$county)
+```
+
+```{r}
+#7: mort_data$year
+unique(mort_data$year)
+```
+
+```{r}
+#8: mort_data$cause_desc
+unique(mort_data$cause_desc)
+```
+
+```{r}
+#9: mort_data$count
+summary(mort_data$count)
+```
+
+```{r}
+#10: healthcare_data$oshpd_project_status
+unique(healthcare_data$oshpd_project_status)
+```
+
+```{r}
+#11: healthcare_data$data_generation_date
+unique(healthcare_data$data_generation_date)
+```
+
+```{r}
+#12: healthcare_data$total_costs_of_oshpd_projects
+summary(healthcare_data$total_costs_of_oshpd_projects)
+```
+
+```{r}
+#13: healthcare_data$county
+unique(healthcare_data$county)
+```
+
+```{r}
+#14: healthcare_data$number_of_oshpd_projects
+summary(healthcare_data$number_of_oshpd_projects)
+```
