@@ -1,0 +1,303 @@
+---
+title: "R Project Milestone 3"
+author: "Moyra Rasheed, Courtney Coon, Jarett Maycott"
+date: '2022-10-28'
+output:
+  pdf_document: default
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(readr)
+library(dplyr)
+library(stringr)
+ 
+```
+
+```{r echo=FALSE, results=FALSE}
+demo_data<-read.csv(
+  "https://raw.githubusercontent.com/PHW290/phw251_projectdata/main/ca_county_demographic.csv",
+                    stringsAsFactors = FALSE)
+#str(demo_data)
+#data is clean and ready to use
+```
+
+```{r echo=FALSE, results=FALSE}
+mort_data<-read.csv(
+  "https://raw.githubusercontent.com/PHW290/phw251_projectdata/main/ca_county_mortality.csv",
+                    stringsAsFactors = FALSE,na.strings = "")
+
+#remove last 2 columns b/c mostly NAs ("Annotation_...")
+mort_data<-mort_data[,1:8]
+head(mort_data)
+
+#column names are all capitalized
+colnames(mort_data) <- str_to_lower(colnames(mort_data))
+head(mort_data)
+
+#note "strata" and "strata_name" may have categories we want to pull out at some point
+```
+
+```{r echo=FALSE, results=FALSE}
+healthcare_data<-read.csv(
+  "https://raw.githubusercontent.com/PHW290/phw251_projectdata/main/hcai_healthcare_construction.csv",
+  stringsAsFactors = FALSE,na.strings = "")
+
+#remove last column ("Collection.of.Counties") b/c mostly NAs
+healthcare_data<-healthcare_data[,1:5]
+head(healthcare_data)
+
+#column names are all capitalized
+colnames(healthcare_data) <- str_to_lower(colnames(healthcare_data))
+head(healthcare_data)
+
+#change "." to "_" for consistency with other datasets
+names(healthcare_data) <- gsub(x = names(healthcare_data), pattern = "\\.", 
+                               replacement = "_")  
+head(healthcare_data)
+
+#change county names to match other two datasets (remove numbers in front)
+healthcare_data<-healthcare_data%>%
+  mutate(county=substring(healthcare_data$county, 6))
+head(healthcare_data)
+
+#change money column ("Total.Costs...") to numeric
+healthcare_data<-healthcare_data%>%
+  mutate(total_costs_of_oshpd_projects = total_costs_of_oshpd_projects %>% 
+           str_remove_all("[$,]"))
+healthcare_data$total_costs_of_oshpd_projects<-as.numeric(healthcare_data$total_costs_of_oshpd_projects)
+head(healthcare_data)
+
+#fix "data_generation_date" (remove empty time)
+healthcare_data$data_generation_date<-as.Date(healthcare_data$data_generation_date)
+head(healthcare_data)
+
+#change money column ("Total.Costs...") to numeric
+healthcare_data<-healthcare_data%>%
+  mutate(total_costs_of_oshpd_projects = total_costs_of_oshpd_projects %>% 
+           str_remove_all("[$,]"))
+healthcare_data$total_costs_of_oshpd_projects<-as.numeric(healthcare_data$total_costs_of_oshpd_projects)
+head(healthcare_data)
+
+#fix "data_generation_date" (remove empty time)
+healthcare_data$data_generation_date<-as.Date(healthcare_data$data_generation_date)
+head(healthcare_data)
+
+```
+
+# Demographic data
+```{r}
+#subset demographic dataset to include only needed columns
+demo_sub<-select(demo_data, c("pop12_sqmi", "name", "med_age","renter_occ", "owner_occ"))
+
+#categorize median age: younger is lower priority, older is high priority
+sum_med_age<-summary(demo_sub$med_age)
+sum_med_age
+demo_sub<-demo_sub%>%
+  mutate(med_age_CAT= case_when(
+    med_age < as.numeric(sum_med_age[2]) ~ "Low priority",      
+    med_age < as.numeric(sum_med_age[5]) ~ "Medium priority",
+    TRUE ~ "High priority"))%>% 
+  mutate(med_age_CAT = factor(med_age_CAT, 
+    levels = c("Low priority", "Medium priority", "High priority")))
+
+#categorize pop12_sqmi with low density (rural) as high priority
+sum_pop12_sqmi<-summary(demo_sub$pop12_sqmi)
+sum_pop12_sqmi
+demo_sub<-demo_sub%>%
+  mutate(pop12_sqmi_CAT= case_when(
+    pop12_sqmi < as.numeric(pop12_sqmi[2]) ~ "High priority",      
+    pop12_sqmi < as.numeric(pop12_sqmi[5]) ~ "Medium priority",
+    TRUE ~ "Low priority"))%>%
+  mutate(pop12_sqmi_CAT = factor(pop12_sqmi_CAT, 
+    levels = c("Low priority", "Medium priority", "High priority")))
+
+#create % renter (of all households) variable
+demo_sub<-demo_sub%>%
+  mutate(renter_ratio=renter_occ/(owner_occ+renter_occ))
+
+#categorize renter_ratio with higher ratio being a higher priority
+sum_renter_ratio<-summary(demo_sub$renter_ratio)
+sum_renter_ratio
+demo_sub<-demo_sub%>%
+  mutate(renter_ratio_CAT= case_when(
+    renter_ratio < as.numeric(renter_ratio[2]) ~ "Low priority",      
+    renter_ratio < as.numeric(renter_ratio[5]) ~ "Medium priority",
+    TRUE ~ "High priority"))%>%
+  mutate(renter_owner_ratio_CAT = factor(renter_ratio_CAT, 
+    levels = c("Low priority", "Medium priority", "High priority")))
+
+demo_sub<-select(demo_sub, c("pop12_sqmi_CAT", "name", "med_age_CAT","renter_ratio_CAT"))
+
+```
+
+\newpage
+# Mortality data
+```{r}
+#filter by 'strata_name' as "total_population'
+mort_sub<-mort_data%>%
+  filter(strata_name=="Total Population")
+#Note: We kept occurence and residence data because it's a metric of overall 
+#population load at the hospital
+
+#replace NAs with zeros
+mort_sub <- mort_sub %>% mutate(count = ifelse(is.na(count), 0, count))
+
+#filter non-chronic diseases
+unique(mort_data$cause_desc)
+#Note: We removed all non-chronic diseases: "all cause", "assault", "accidents",
+#"influenza" and "self-harm"
+
+mort_sub<-mort_sub%>%
+  filter(cause_desc %in% c("Alzheimer's disease", "Malignant neoplasms",
+                     "Chronic lower respiratory diseases","Diabetes mellitus",
+                     "Diseases of heart", "Essential hypertension and hypertensive renal disease",
+                     "Chronic liver disease and cirrhosis", "Nephritis, nephrotic syndrome and nephrosis",
+                     "Parkinson's disease", "Cerebrovascular diseases"))
+unique(mort_sub$cause_desc)
+
+#summarize chronic death mortality by county
+mort_sub_grouped<-mort_sub%>%
+  group_by(county)%>%
+  summarize(summed_chronic_dis_mort=sum(count))
+
+#make summed_chronic_dis_mort categorical with higher counts of chronic disease
+#in hospitals being higher priority
+sum_summed_chronic_dis_mort<-summary(mort_sub_grouped$summed_chronic_dis_mort)
+sum_summed_chronic_dis_mort
+mort_sub_grouped<-mort_sub_grouped%>%
+  mutate(summed_chronic_dis_mort_CAT= case_when(
+    summed_chronic_dis_mort < as.numeric(sum_summed_chronic_dis_mort[2]) ~ "Low priority",      
+    summed_chronic_dis_mort < as.numeric(sum_summed_chronic_dis_mort[5]) ~ "Medium priority",
+    TRUE ~ "High priority"))%>%
+  mutate(summed_chronic_dis_mort_CAT = factor(summed_chronic_dis_mort_CAT, 
+    levels = c("Low priority", "Medium priority", "High priority")))
+
+
+```
+
+\newpage
+# Healthcare data
+```{r}
+#filter data to only include projects with 'project status' as "Pending 
+#Construction," "In Construction" or "In Closure"  
+healthcare_sub<-healthcare_data%>%
+  filter(oshpd_project_status!="In Review")
+#Note: We only filtered out "in review" because all other projects with other
+#statuses were guaranteed to be completed and we wanted to prioritize locations
+#with the fewest projects that were at any stage of completion
+
+#filter out 2013 data
+healthcare_sub<-healthcare_sub%>%
+  filter(data_generation_date > "2015-01-01")
+
+#summarize 'total_cost' of projects 'in closure' over the 5 years (2015-2020)
+#FIX: PRIORITIZE LOW COST AND LOW NUMBER OF PROJECTS
+healthcare_sub_grouped<-healthcare_sub%>%
+  group_by(county)%>%
+  summarize(summed_total_cost=sum(total_costs_of_oshpd_projects))
+
+#make the total cost of all oshpd projects categorical where counties with higher 
+#total costs are lower priority
+s_summed_total_cost<-summary(healthcare_sub_grouped$summed_total_cost)
+s_summed_total_cost
+healthcare_sub_grouped<-healthcare_sub_grouped%>%
+  mutate(summed_total_cost_CAT= case_when(
+    summed_total_cost < as.numeric(s_summed_total_cost[2]) ~ "High priority",      
+    summed_total_cost < as.numeric(s_summed_total_cost[5]) ~ "Medium priority",
+    TRUE ~ "Low priority"))%>%
+  mutate(summed_total_cost_CAT = factor(summed_total_cost_CAT, 
+    levels = c("Low priority", "Medium priority", "High priority")))
+
+```
+
+\newpage
+# Merge the 3 datasets
+```{r}
+#merge data sets by county
+merged_data<-full_join(mort_sub_grouped, healthcare_sub_grouped, by="county")
+merged_data<-full_join(merged_data, demo_sub, by=c("county"= "name"))
+merged_data <- subset( merged_data, select = -c(summed_chronic_dis_mort, summed_total_cost))
+head(merged_data)
+
+```
+
+\newpage
+# Data Dictionary
+## variable 1: "county"
+The county the data comes from.
+
+## variable 2: "summed_chronic_dis_mort_CAT"
+This is the summed number of mortality cases from chronic diseases in each county 
+from 2015-2020. It was categorized into low, medium and high priority based on 
+whether density was below the 1st quantile (low priority), between the 1st and 
+3rd quantile (medium priority), or above the 3rd quantile (high priority) because
+we wanted to priority counties with higher burdens of chronic diseases.
+
+## variable 3: "summed_total_cost_CAT"
+This is the total cost of all projects "Pending Construction," "In Construction,"
+or "In Closure" from 1/1/2015 through 8/11/2022 (most recent data). It was 
+categorized into low, medium and high priority based on whether summed total costs 
+were below the 1st quantile (high priority), between the 1st and 3rd quantile 
+(medium priority), or above the 3rd quantile (low priority) because we wanted to
+prioritize counties that had received less funding for oshpd projects.
+
+## variable 4: "pop12_sqmi_CAT"
+This is population density at the county level categorized into low, medium and 
+high priority based on whether density was below the 1st quantile (high priority),
+between the 1st and 3rd quantile (medium priority), or above the 3rd quantile 
+(low priority) because we wanted to prioritize rural counties i.e., those with
+lower population densities.
+
+## variable 5: "med_age_CAT"
+This is median age of residents at the county level categorized into low, medium 
+and high priority based on whether median age was below the 1st quantile (low 
+priority), between the 1st and 3rd quantile (medium priority), or above the 3rd 
+quantile (high priority) because we wanted to prioritize counties with more
+elderly populations.
+
+## variable 6: "renter_ratio_CAT"
+This variable was created by dividing the number of renters by the total number
+households (which was equal to renter_occ and owner_occ) in a county and then 
+categorizing them into low, medium and high priority. The ratio was categorized 
+as high priority if it was below the 1st quantile, medium priority if it was 
+between 1st and 3rd quantile, or low priority if it was above the 3rd quantile 
+as compared to other counties in the state of California.
+
+\newpage
+# Table with descriptive stats for variables in data dictionary
+```{r}
+library(kableExtra)
+
+table<-merged_data%>%
+ rowwise() %>%
+ mutate(number_highs= sum(c_across(2:6) == "High priority", na.rm = TRUE),
+        number_mediums= sum(c_across(2:6) == "Medium priority", na.rm = TRUE),
+        temp_rank=(number_highs*2)+number_mediums
+        )%>%
+  ungroup()%>%
+  arrange(desc(temp_rank))%>%
+  select(-c(number_highs, number_mediums,temp_rank))%>%
+  slice(1:10)
+head(table)
+
+kable(table,
+       col.names = c("County","Chronic disease mortality burden",
+                     "Previous spending on projects", 
+                     "Population density", "Median age of population", 
+                     "% population that are renters"),
+       caption="Top 10 Counties ranked by need for oshpd projects.",
+       booktabs=TRUE, 
+       align='lccccc')%>%
+  kable_styling(latex_options="scale_down")
+
+ table
+```
+
+
+
+
+
