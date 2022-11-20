@@ -25,7 +25,7 @@ demo_data<-read.csv(
                     stringsAsFactors = FALSE)
 
 ## subset demographic dataset to include only needed columns
-demo_sub<-select(demo_data, c("pop12_sqmi", "name", "med_age","renter_occ", "owner_occ"))
+demo_sub<-select(demo_data, c("pop2012","pop12_sqmi", "name", "med_age","renter_occ", "owner_occ"))
 
 ## categorize median age: younger is lower priority, older is high priority
 sum_med_age<-summary(demo_sub$med_age)
@@ -64,7 +64,7 @@ demo_sub<-demo_sub%>%
   mutate(renter_owner_ratio_CAT = factor(renter_ratio_CAT, 
     levels = c("Low priority", "Medium priority", "High priority")))
 
-demo_col_order <- c("name", "pop12_sqmi", "pop12_sqmi_CAT", "med_age", 
+demo_col_order <- c("name", "pop2012","pop12_sqmi", "pop12_sqmi_CAT", "med_age", 
                "med_age_CAT", "renter_ratio", "renter_ratio_CAT")
 demo_sub <- demo_sub[, demo_col_order]
 
@@ -107,20 +107,6 @@ mort_sub<-mort_sub%>%
 mort_sub_grouped<-mort_sub%>%
   group_by(county)%>%
   summarize(summed_chronic_dis_mort=sum(count))
-
-## make summed_chronic_dis_mort categorical with higher counts of chronic 
-## disease in hospitals being higher priority
-sum_summed_chronic_dis_mort<-summary(mort_sub_grouped$summed_chronic_dis_mort)
-sum_summed_chronic_dis_mort
-mort_sub_grouped<-mort_sub_grouped%>%
-  mutate(summed_chronic_dis_mort_CAT= case_when(
-    summed_chronic_dis_mort < 
-      as.numeric(sum_summed_chronic_dis_mort[2]) ~ "Low priority",      
-    summed_chronic_dis_mort < 
-      as.numeric(sum_summed_chronic_dis_mort[5]) ~ "Medium priority",
-    TRUE ~ "High priority"))%>%
-  mutate(summed_chronic_dis_mort_CAT = factor(summed_chronic_dis_mort_CAT, 
-    levels = c("Low priority", "Medium priority", "High priority")))
 
 ```
 
@@ -202,6 +188,26 @@ healthcare_sub_grouped<-healthcare_sub_grouped%>%
 merged_data<-full_join(mort_sub_grouped, healthcare_sub_grouped, by="county")
 merged_data<-full_join(merged_data, demo_sub, by=c("county"= "name"))
 
+## use merged data to relativize mortality data
+merged_data<-merged_data%>%
+  mutate(relative_chronic_dis_mort=(summed_chronic_dis_mort/pop2012))%>%
+  select(-c(summed_chronic_dis_mort, pop2012))
+
+## make relative_chronic_dis_mort categorical with higher counts of chronic 
+## disease in hospitals being higher priority
+sum_relative_chronic_dis_mort<-summary(merged_data$relative_chronic_dis_mort)
+sum_relative_chronic_dis_mort
+merged_data<-merged_data%>%
+  mutate(relative_chronic_dis_mort_CAT= case_when(
+    relative_chronic_dis_mort < 
+      as.numeric(sum_relative_chronic_dis_mort[2]) ~ "Low priority",      
+    relative_chronic_dis_mort < 
+      as.numeric(sum_relative_chronic_dis_mort[5]) ~ "Medium priority",
+    TRUE ~ "High priority"))%>%
+  mutate(relative_chronic_dis_mort_CAT = factor(relative_chronic_dis_mort_CAT, 
+    levels = c("Low priority", "Medium priority", "High priority")))
+
+
 ```
 
 
@@ -210,30 +216,37 @@ merged_data<-full_join(merged_data, demo_sub, by=c("county"= "name"))
 # Visualization 1: 
 # Table 
 ```{r}
-# library(kableExtra)
+library(kableExtra)
+table_col_order <- c("county", "summed_total_cost", "pop12_sqmi",
+                     "med_age", "renter_ratio",
+                     "relative_chronic_dis_mort", "med_age_CAT",
+                     "summed_total_cost_CAT", "pop12_sqmi_CAT",
+                     "renter_ratio_CAT","relative_chronic_dis_mort_CAT")
+merged_data_for_table <- merged_data[, table_col_order]
 
-# table<-merged_data%>%
-#  rowwise() %>%
-#  mutate(number_highs= sum(c_across(2:6) == "High priority", na.rm = TRUE),
-#         number_mediums= sum(c_across(2:6) == "Medium priority", na.rm = TRUE),
-#         temp_rank=(number_highs*2)+number_mediums
-#         )%>%
-#   ungroup()%>%
-#   arrange(desc(temp_rank))%>%
-#   select(-c(number_highs, number_mediums,temp_rank))%>%
-#   slice(1:10)
-# head(table)
-# 
+ table<-merged_data_for_table%>%
+  rowwise() %>%
+  mutate(number_highs= sum(c_across(7:11) == "High priority", na.rm = TRUE),
+         number_mediums= sum(c_across(7:11) == "Medium priority", na.rm = TRUE),
+         temp_rank=(number_highs*2)+number_mediums
+         )%>%
+   ungroup()%>%
+   arrange(desc(temp_rank))%>%
+   select(-c(number_highs, number_mediums))%>%
+   slice(1:15)
+table
+
+#
 # kable(table,
 #        col.names = c("County","Chronic disease mortality burden",
-#                      "Previous spending on projects", 
-#                      "Population density", "Median age of population", 
+#                      "Previous spending on projects",
+#                      "Population density", "Median age of population",
 #                      "% population that are renters"),
 #        caption="Top 10 Counties ranked by need for oshpd projects.",
-#        booktabs=TRUE, 
+#        booktabs=TRUE,
 #        align='lccccc')%>%
 #   kable_styling(latex_options="scale_down")
-# 
+#
 #  table
 ```
 
@@ -281,37 +294,35 @@ second_fig_data_temp<-merged_data%>%
  rowwise() %>%
  mutate(number_highs= sum(c_across(2:4) == "High priority", na.rm = TRUE),
         number_mediums= sum(c_across(2:4) == "Medium priority", na.rm = TRUE),
-        temp_rank=(number_highs*2)+number_mediums
+        demo_rank=(number_highs*2)+number_mediums
         )%>%
   ungroup()%>%
-  select(c("county", "temp_rank"))
+  select(c("county", "demo_rank"))
   
 second_fig_data_final<-full_join(second_fig_data_temp, merged_data, by="county")
-
+summary(second_fig_data_final$relative_chronic_dis_mort)
 ## make the figure
-## summed chronic disease mortality median = 13413 
-## log(summed chronic disease mortality median) = log(13413) = 9.50398
+## relative chronic disease mortality median = 0.07213
+## log(relative chronic disease mortality median) = log(0.07213) = -2.629285
 ## summed total cost median = 5961782208
 ## log(summed total cost median) = log(5961782208) = 22.50864
 ggplot(data = second_fig_data_final, 
-       aes(x = log(summed_chronic_dis_mort), y = log(summed_total_cost))) + 
+       aes(y = relative_chronic_dis_mort, x = log(summed_total_cost))) + 
 geom_point(data = second_fig_data_final, 
-           aes(x = log(summed_chronic_dis_mort), y = log(summed_total_cost), 
-                                   color = as.factor(temp_rank))) +
+           aes(y = relative_chronic_dis_mort, x = log(summed_total_cost), 
+                                   color = as.factor(demo_rank))) +
 guides(color = guide_legend(reverse=TRUE))+
  geom_text_repel(aes(label=ifelse(
-   (summed_chronic_dis_mort >= 13413 & summed_total_cost<=5961782208 
-    & temp_rank >1), county, "")), max.overlaps = Inf)+
+   (relative_chronic_dis_mort >= 0.07213 & summed_total_cost<=5961782208 
+    & demo_rank >3), county, "")), max.overlaps = Inf)+
 labs(title = "Additional data with priority counties identified:",
  subtitle = "counties with high chronic disease mortality, 
 low previous investment, and high priority based on demographics", 
         x = "Log(total dollars invested in previous projects)", 
-        y = "Log(number of chronic disease mortality events \n between 2015-2020)", 
+        y = "Log(relative number of chronic disease \n mortality events between 2015-2020)", 
         color = "priority ranking \n score based on \n demographics data") +
    theme(plot.title=element_text(hjust=0.5),
          plot.subtitle=element_text(hjust=0.5))
-
-##PROBLEM - demographics ranking score is not matching with figure                       
 
 ```
 
