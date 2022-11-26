@@ -1,7 +1,7 @@
 ---
 title: "R Project Milestone 3"
 author: "Moyra Rasheed, Courtney Coon, Jarett Maycott"
-date: '2022-10-28'
+date: '2022-11-26'
 output:
   pdf_document: default
 
@@ -153,6 +153,10 @@ healthcare_sub<-healthcare_data%>%
 healthcare_sub<-healthcare_sub%>%
   filter(data_generation_date > "2015-01-01")
 
+## remove an unnecessary warning message: `summarise()` has grouped output by 
+## 'county'. You can override using the `.groups` argument.
+options(dplyr.summarise.inform = FALSE)
+
 ## average 'total_cost' in each category for each county to reduce 
 ## over-counting that is occurring in the data set
 healthcare_sub_grouped<-healthcare_sub%>%
@@ -212,9 +216,108 @@ merged_data<-merged_data%>%
 
 
 
+```{r echo=FALSE, results=FALSE}
+library(ggplot2)
+library(ggrepel)
+```
+
+# Visualization 1:
+Plot 1: As a first step, we plotted demographic information only (population per 
+square mile, renter to homeowner ratio, and median age of the residents of the 
+county) and highlighted the counties that would be the highest priority if
+we were only looking at the demographic data. We prioritized low density, higher
+percentage of renters, and older populations.
+
+```{r}
+## renter ratio median = 39%
+## median age median = 37.05
+## population density 1st quantile (low cutoff) = 25.887
+## population density 3rd quantile (high cutoff) = 333.485
+ggplot(data = merged_data, aes(x = renter_ratio, y = med_age)) + 
+geom_point(data = merged_data, aes(x = renter_ratio, y = med_age, 
+                                   color = pop12_sqmi_CAT)) +
+geom_text_repel(aes(label=ifelse((med_age > 37 & renter_ratio > 0.39 
+    & (pop12_sqmi_CAT=="High priority"| pop12_sqmi_CAT=="Medium priority")), 
+    county, "")))+
+  labs(title = "Priority counties identified based on demographic data only:",
+subtitle = "counties with high median age (>37yo), high ratio of renters (>39%), 
+and low or medium population density (<333 people/sqmi)", 
+       x = "Ratio of renters to homeowners", 
+       y = "Median age of county residents", 
+       color = 
+         bquote(atop(Population~per~mile^{"2"}, "rural as high priority")))+
+  theme(plot.title=element_text(hjust=0.5),
+        plot.subtitle=element_text(hjust=0.5))
+                          
+```
+
+
+
 \newpage
-# Visualization 1: 
-# Table 
+# Visualization 2:
+Plot 2: Here we integrated demographic data from Plot 1 with additional data: 
+the total dollars invested in prior projects (with higher priority for less 
+money previously invested) and number of chronic disease mortality events 
+between 2015-2020, relativized by total population (with higher priority being 
+higher relative levels of chronic disease mortality). We used demographic data 
+from Plot 1 to create a new ranked variable which we used to color code data in 
+Plot 2. Counties highlighted in Plot 1 were ranked more highly in Plot 2. Thus 
+this Plot includes all 5 variables of interest to identify the counties that 
+require greater funding. Note that money invested in previous projects has been
+logged to make the plot easier to read.
+
+```{r}
+# make data set with continuous data and ranking factor for the demographic 
+# data in the first figure
+second_fig_data_temp<-merged_data%>%
+  select(c("county", "pop12_sqmi_CAT", "med_age_CAT", "renter_ratio_CAT"))%>%
+ rowwise() %>%
+ mutate(number_highs= sum(c_across(2:4) == "High priority", na.rm = TRUE),
+        number_mediums= sum(c_across(2:4) == "Medium priority", na.rm = TRUE),
+        demo_rank=(number_highs*2)+number_mediums
+        )%>%
+  ungroup()%>%
+  select(c("county", "demo_rank"))
+  
+second_fig_data_final<-full_join(second_fig_data_temp, merged_data, by="county")
+## summary(second_fig_data_final$relative_chronic_dis_mort)
+
+# make the figure
+## relative chronic disease mortality median = 0.07213
+## log(relative chronic disease mortality median) = log(0.07213) = -2.629285
+## summed total cost median = 5961782208
+## log(summed total cost median) = log(5961782208) = 22.50864
+ggplot(data = second_fig_data_final, 
+       aes(y = relative_chronic_dis_mort, x = log(summed_total_cost))) + 
+geom_point(data = second_fig_data_final, 
+           aes(y = relative_chronic_dis_mort, x = log(summed_total_cost), 
+                                   color = as.factor(demo_rank))) +
+guides(color = guide_legend(reverse=TRUE))+
+ geom_text_repel(aes(label=ifelse(
+   (relative_chronic_dis_mort >= 0.07213 & summed_total_cost<=5961782208 
+    & demo_rank >3), county, "")), max.overlaps = Inf)+
+labs(title = "Priority counties identified with all data:",
+ subtitle = "counties with high relative chronic disease mortality, 
+low previous investment, and high priority based on demographics", 
+        x = "Log(total dollars invested in previous projects)", 
+        y = 
+"Relative number of chronic disease \n mortality events between 2015-2020", 
+        color = "Priority ranking \nscore based on \ndemographics data") +
+   theme(plot.title=element_text(hjust=0.5),
+         plot.subtitle=element_text(hjust=0.5))
+
+```
+
+
+\newpage
+# Visualization 3: 
+Table 1: We used a table as a different way to organize the 5 variables of 
+interest. We categorized each variable and then ranked each as high, medium, or
+low priority. We then created a new variable where "high priority" variables
+were given two points, "medium priority" variables given 1 point, and "low
+priority" variables given 0 points for each county. Then Counties are ranked
+by number of points. Most of the Counties highlighted in Plot/Visualization 2 
+were also the most highly ranked in the table.
 ```{r}
 library(kableExtra)
 
@@ -248,94 +351,6 @@ table
 #        align='lccccc')%>%
 #   kable_styling(latex_options="scale_down")
 
- table
 ```
-
-\newpage
-# Visualization 2: 
-# Using demographic data to rank counties
-```{r echo=FALSE, results=FALSE}
-library(ggplot2)
-library(ggrepel)
-```
-
-
-```{r}
-## renter ratio median = 39%
-## median age median = 37.05
-## population density 1st quantile (low cutoff) = 25.887
-## population density 3rd quantile (high cutoff) = 333.485
-ggplot(data = merged_data, aes(x = renter_ratio, y = med_age)) + 
-geom_point(data = merged_data, aes(x = renter_ratio, y = med_age, 
-                                   color = pop12_sqmi_CAT)) +
-geom_text_repel(aes(label=ifelse((med_age > 37 & renter_ratio > 0.39 
-    & (pop12_sqmi_CAT=="High priority"| pop12_sqmi_CAT=="Medium priority")), 
-    county, "")))+
-  labs(title = "Demographic data with priority counties identified:",
-subtitle = "counties with high median age (>37yo), high ratio of renters (>39%), 
-and low or medium population density (<333 people/sqmi)", 
-       x = "ratio of renters to homeowners", 
-       y = "median age of county residents", 
-       color = 
-         bquote(atop(Population~per~mile^{"2"}, "rural as high priority")))+
-  theme(plot.title=element_text(hjust=0.5),
-        plot.subtitle=element_text(hjust=0.5))
-                          
-
-```
-In plot (afterline 284): 
-We are plotting  population per square mile based upon higher renter to owner 
-ratio and higher median age. We are focused on those counties with a higher
-ranking based upon our table of "merged_data". 
-
-
-\newpage
-# Visualization 3: 
-# Using mortality and investment data to rank counties
-```{r}
-## make data set with continuous data and ranking factor for the demographic 
-## data in the first figure
-second_fig_data_temp<-merged_data%>%
-  select(c("county", "pop12_sqmi_CAT", "med_age_CAT", "renter_ratio_CAT"))%>%
- rowwise() %>%
- mutate(number_highs= sum(c_across(2:4) == "High priority", na.rm = TRUE),
-        number_mediums= sum(c_across(2:4) == "Medium priority", na.rm = TRUE),
-        demo_rank=(number_highs*2)+number_mediums
-        )%>%
-  ungroup()%>%
-  select(c("county", "demo_rank"))
-  
-second_fig_data_final<-full_join(second_fig_data_temp, merged_data, by="county")
-summary(second_fig_data_final$relative_chronic_dis_mort)
-## make the figure
-## relative chronic disease mortality median = 0.07213
-## log(relative chronic disease mortality median) = log(0.07213) = -2.629285
-## summed total cost median = 5961782208
-## log(summed total cost median) = log(5961782208) = 22.50864
-ggplot(data = second_fig_data_final, 
-       aes(y = relative_chronic_dis_mort, x = log(summed_total_cost))) + 
-geom_point(data = second_fig_data_final, 
-           aes(y = relative_chronic_dis_mort, x = log(summed_total_cost), 
-                                   color = as.factor(demo_rank))) +
-guides(color = guide_legend(reverse=TRUE))+
- geom_text_repel(aes(label=ifelse(
-   (relative_chronic_dis_mort >= 0.07213 & summed_total_cost<=5961782208 
-    & demo_rank >3), county, "")), max.overlaps = Inf)+
-labs(title = "Additional data with priority counties identified:",
- subtitle = "counties with high chronic disease mortality, 
-low previous investment, and high priority based on demographics", 
-        x = "Log(total dollars invested in previous projects)", 
-        y = 
-"relative number of chronic disease \n mortality events between 2015-2020", 
-        color = "priority ranking \n score based on \n demographics data") +
-   theme(plot.title=element_text(hjust=0.5),
-         plot.subtitle=element_text(hjust=0.5))
-
-```
-Based upon our plot 333: We merged the data  from the prior plot and compared 
-the total dollars invested in prior projects  to mortality events associated with
-chronic diseases in a 5 year span (from 2015-2020) and by comapring these 5 
-variables we identified  the 
-counties that required greater funding.   
 
 
