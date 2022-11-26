@@ -217,6 +217,7 @@ merged_data<-merged_data%>%
 # Table 
 ```{r}
 library(kableExtra)
+
 table_col_order <- c("county", "summed_total_cost", "pop12_sqmi",
                      "med_age", "renter_ratio",
                      "relative_chronic_dis_mort", "med_age_CAT",
@@ -236,7 +237,7 @@ merged_data_for_table <- merged_data[, table_col_order]
    slice(1:15)
 table
 
-#
+
 # kable(table,
 #        col.names = c("County","Chronic disease mortality burden",
 #                      "Previous spending on projects",
@@ -246,8 +247,8 @@ table
 #        booktabs=TRUE,
 #        align='lccccc')%>%
 #   kable_styling(latex_options="scale_down")
-#
-#  table
+
+ table
 ```
 
 \newpage
@@ -282,6 +283,11 @@ and low or medium population density (<333 people/sqmi)",
                           
 
 ```
+In plot (afterline 284): 
+We are plotting  population per square mile based upon higher renter to owner 
+ratio and higher median age. We are focused on those counties with a higher
+ranking based upon our table of "merged_data". 
+
 
 \newpage
 # Visualization 3: 
@@ -319,10 +325,17 @@ labs(title = "Additional data with priority counties identified:",
  subtitle = "counties with high chronic disease mortality, 
 low previous investment, and high priority based on demographics", 
         x = "Log(total dollars invested in previous projects)", 
-        y = "Log(relative number of chronic disease \n mortality events between 2015-2020)", 
+        y = 
+"relative number of chronic disease \n mortality events between 2015-2020", 
         color = "priority ranking \n score based on \n demographics data") +
    theme(plot.title=element_text(hjust=0.5),
          plot.subtitle=element_text(hjust=0.5))
 
 ```
+Based upon our plot 333: We merged the data  from the prior plot and compared 
+the total dollars invested in prior projects  to mortality events associated with
+chronic diseases in a 5 year span (from 2015-2020) and by comapring these 5 
+variables we identified  the 
+counties that required greater funding.   
+
 
