@@ -6,7 +6,6 @@ output: html_document
 
 ---
 
-
 ```{r setup, include=FALSE}
 # BACKGROUND: packages
 knitr::opts_chunk$set(echo = TRUE)
