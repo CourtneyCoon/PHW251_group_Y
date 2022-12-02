@@ -340,16 +340,26 @@ merged_data_for_table <- merged_data[, table_col_order]
    slice(1:15)
 table
 
+table <- table %>% select(, c(1,2,8,3,9,4,7,5,10,6,11))
 
-# kable(table,
-#        col.names = c("County","Chronic disease mortality burden",
-#                      "Previous spending on projects",
-#                      "Population density", "Median age of population",
-#                      "% population that are renters"),
-#        caption="Top 10 Counties ranked by need for oshpd projects.",
-#        booktabs=TRUE,
-#        align='lccccc')%>%
-#   kable_styling(latex_options="scale_down")
+table_printed = kable(table,
+        col.names = c("","","",
+                      "", "",
+                      "", "",
+                       "", "",
+                      "", ""
+                    ),
+       caption="Top 10 Counties ranked by need for oshpd projects.",
+        booktabs=TRUE,
+        align='lclclclclcl')%>%
+   kable_styling(latex_options="scale_down")
+
+add_header_above(table_printed, c("County" = 1,"Previous spending on projects" = 2,
+                      "Population density" = 2,
+                      "Median age of population" = 2,
+                       "% population that are renters"= 2,
+                      "Chronic disease mortality burden" = 2
+                    ))
 
 ```
 
