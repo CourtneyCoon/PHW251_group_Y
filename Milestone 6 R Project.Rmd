@@ -361,10 +361,18 @@ score of 7 points. Counties were then ranked on their total ranking score.
 
 
 ### *Figure 1:*
-add caption
+Here we have identified high priority counties based on demographic data only
+with priority given to counties with: (1) renter ratios above the median of all
+counties (median = 39%), (2) median population age above the median for all 
+counties (median = 37 years old), and (3) population densities below the third
+quantile for all counties (1st quantile = 25.9 people per square mile; 3rd 
+quantile = 333.5 people per square mile). Each dot represents a county in 
+California. Counties that are named on the figure are those meeting all of the
+high priority demographic criteria: Mendicino, San Luis Obispo, Sonoma, San
+Mateo, Butte, Humboldt, and Mono Counties.
 ```{r echo=FALSE, results=TRUE}
-## renter ratio median = 39%
-## median age median = 37.05
+## renter ratio median = 39%; 3rd quantile=0.4247
+## median age median = 37.05; 3rd quantile=43.08
 ## population density 1st quantile (low cutoff) = 25.887
 ## population density 3rd quantile (high cutoff) = 333.485
 ggplot(data = merged_data, aes(x = renter_ratio, y = med_age)) + 
@@ -372,16 +380,18 @@ geom_point(data = merged_data, aes(x = renter_ratio, y = med_age,
                                    color = pop12_sqmi_CAT)) +
 geom_text_repel(aes(label=ifelse((med_age > 37 & renter_ratio > 0.39 
     & (pop12_sqmi_CAT=="High priority"| pop12_sqmi_CAT=="Medium priority")), 
-    county, "")))+
-  labs(title = "Priority counties identified based on demographic data only:",
+    county, "")), min.segment.length = 0)+
+  labs(title = "High priority counties based on demographic data only:",
 subtitle = "counties with high median age (>37yo), high ratio of renters (>39%), 
-and low or medium population density (<333 people/sqmi)", 
-       x = "Fraction of renters", 
+and lower population density", 
+       x = "Ratio of renters to homeowners", 
        y = "Median age of county residents", 
        color = 
-         bquote(atop(Population~per~mile^{"2"}, "rural as high priority")))+
+         bquote(atop(Population~per~mile^{"2"}, "(rural is high priority)")))+
   theme(plot.title=element_text(hjust=0.5),
-        plot.subtitle=element_text(hjust=0.5))
+        plot.subtitle=element_text(hjust=0.5))+
+  scale_color_manual(labels = c("Low priority (>333)", "Medium priority (26-333)",
+        "<26"), values = c("#b2e2e2", "#66c2a4", "#238b45"))
                           
 ```
 
@@ -420,7 +430,7 @@ geom_point(data = second_fig_data_final,
 guides(color = guide_legend(reverse=TRUE))+
  geom_text_repel(aes(label=ifelse(
    (relative_chronic_dis_mort >= 0.07213 & summed_total_cost<=5961782208 
-    & demo_rank >3), county, "")), max.overlaps = Inf)+
+    & demo_rank >3), county, "")), max.overlaps = Inf, min.segment.length = 0)+
 labs(title = "Priority counties identified with all data:",
  subtitle = "counties with high relative chronic disease mortality, 
 low previous investment, and high priority based on demographics", 
