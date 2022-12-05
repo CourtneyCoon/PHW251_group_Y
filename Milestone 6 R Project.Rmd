@@ -430,7 +430,8 @@ guides(color = guide_legend(reverse=TRUE))+
    (relative_chronic_dis_mort >= 0.07213 & summed_total_cost<=5961782208 
     & demo_rank >3), county, "")), max.overlaps = Inf, min.segment.length = 0)+
 labs(title = "Priority counties identified with all data:",
- subtitle = "counties with high rates of chronic disease mortality (>0.07/person), 
+ subtitle =
+ "counties with high rates of chronic disease mortality (>0.07/person), 
 low previous investment (< log($6B) = 22.5), 
 and high priority based on demographics", 
         x = "Log(total dollars invested in previous projects)", 
@@ -473,6 +474,7 @@ merged_data_for_table <- merged_data[, table_col_order]
    select(-c(high_four_pts, medium_two_pts, high_two_pts, medium_one_pt))%>%
    slice(1:15)
 
+table$renter_ratio <- round(table$renter_ratio *100, 2)
 table <- table%>%select(c(1,2,7,4,9,3,8,6,10,5,11,12))
 table_printed = kable(table,
         col.names = NULL,
@@ -482,9 +484,9 @@ table_printed = kable(table,
    kable_styling(latex_options="scale_down")
 add_header_above(table_printed, 
                  c("County" = 1,"Chronic disease mortality burden" = 2,
-                      "Previous spending on projects" = 2,
                       "Median age of population" = 2,
-                       "Population desnity"= 2,
+                      "Population desnity"= 2,
+                      "Previous spending on projects" = 2,
                       "% of population that are renters" = 2,
                       "County Rank" = 1
                     )) %>%
