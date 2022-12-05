@@ -430,7 +430,8 @@ guides(color = guide_legend(reverse=TRUE))+
    (relative_chronic_dis_mort >= 0.07213 & summed_total_cost<=5961782208 
     & demo_rank >3), county, "")), max.overlaps = Inf, min.segment.length = 0)+
 labs(title = "Priority counties identified with all data:",
- subtitle = "counties with high rates of chronic disease mortality (>0.07/person), 
+ subtitle =
+ "counties with high rates of chronic disease mortality (>0.07/person), 
 low previous investment (< log($6B) = 22.5), 
 and high priority based on demographics", 
         x = "Log(total dollars invested in previous projects)", 
@@ -452,8 +453,8 @@ Tuolumne, Amador, Calaveras, Plumas, and Inyo would be prioritized).
 
 
 \newpage
-### *Table:* 
-JARETT: add caption
+### *Table:* Top 16 counties ranked by need for OSHPD projects  
+Overview of the top 16 counties based on their ranking priorities for OSHPD project need for each variable. Priority categories 'Low', 'Medium', and 'High' are assigned based on quantile position for each county. The six counties highlighted in yellow are the counties with the highest priority need accounting for each variable. Rankings were determined by assessing priority categories per county where more 'high priority' designations increases overall county ranking.      
 ```{r echo=FALSE, results=TRUE}
 table_col_order <- c("county", "relative_chronic_dis_mort","pop12_sqmi",  
                      "med_age", "renter_ratio","summed_total_cost",
@@ -473,27 +474,24 @@ merged_data_for_table <- merged_data[, table_col_order]
    arrange(desc(rank))%>%
    select(-c(high_four_pts, medium_two_pts, high_two_pts, medium_one_pt))%>%
    slice(1:15)
-table
 
-table <- table%>%select(c(1,2,8,3,9,4,7,5,10,6,11))
+table$renter_ratio <- round(table$renter_ratio *100, 2)
+table <- table%>%select(c(1,2,7,4,9,3,8,6,10,5,11,12))
 table_printed = kable(table,
-        col.names = c("","","",
-                      "", "",
-                      "", "",
-                       "", "",
-                      "", ""
-                    ),
-       caption="Top 10 Counties ranked by need for oshpd projects.",
+        col.names = NULL,
+       caption="Top 16 Counties ranked by need for oshpd projects.",
         booktabs=TRUE,
-        align='lclclclclcl')%>%
+        align='lrlrlrlrlrlc')%>%
    kable_styling(latex_options="scale_down")
-add_header_above(table_printed, c("County" = 1,"Previous spending on projects" = 2,
-                      "Population density" = 2,
+add_header_above(table_printed, 
+                 c("County" = 1,"Chronic disease mortality burden" = 2,
                       "Median age of population" = 2,
-                       "% population that are renters"= 2,
-                      "Chronic disease mortality burden" = 2
-                    ))
-
+                      "Population desnity"= 2,
+                      "Previous spending on projects" = 2,
+                      "% of population that are renters" = 2,
+                      "County Rank" = 1
+                    )) %>%
+row_spec(1:6, bold = TRUE,  background = 'yellow')
 ```
 
 The ranking variable described in the Analytic Methods identifies 3 Counties as
