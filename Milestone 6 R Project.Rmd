@@ -451,6 +451,7 @@ graphical method, we would recommend: Tuolumne, Amador, Calaveras, Siskiyou, and
 Lake Counties for future funding.(If previous spending was more valuable, 
 Tuolumne, Amador, Calaveras, Plumas, and Inyo would be prioritized).
 
+
 \newpage
 ### *Table:* Top 16 counties ranked by need for OSHPD projects  
 Overview of the top 16 counties based on their ranking priorities for OSHPD project need for each variable. Priority categories 'Low', 'Medium', and 'High' are assigned based on quantile position for each county. The six counties highlighted in yellow are the counties with the highest priority need accounting for each variable. Rankings were determined by assessing priority categories per county where more 'high priority' designations increases overall county ranking.      
@@ -499,8 +500,23 @@ second-rank priorities - Lake, Nevada, and Siskiyou.
 
 
 
-# **Discussion**
-CC's suggestions on what could go in this section
- - clarify that Plot 1 doesn't identify top priority populations, it's just a first step
- - talk about how Nevada is identified as top priority in the table but not the graphical method
- - Otherwise, our two methods are consistent 
+ **Discussion**
+ Based upon our inital interpretation of data ,we were able to differentiate 8 
+ counties that would benefit from greater healthcare funding: Amador,Calveras, 
+ Tuolumne,Siskiyou,,Plumus, Inyo,El Dorado and Lake Counties. We initially 
+ established 5 criteria during our analysis including chronic disease mortality,
+ median age, population density, total cost projects and renter's ratio. 
+ Based upon our initial plot, we narrowed the above counties to 5 ,placing greater 
+ weight on mortality, age and population density.We placed less significance 
+ on renters ratio and project costs, with the assumption that higher median age 
+ are more likely to be owners rather than renters and cost allocation is more 
+ likely to be directed to those counties with greater healthcare needs.
+ Based upon the above , we narrowed our county allocation to the following:
+  Tuolumne, Amador, Calaveras, Siskiyou,and Lake Counties. (5 counties). 
+  Both out plot and table are reflecting relatively similar data, other than 
+  1 variation.In our analytical data table, Nevada county ranks higher than
+  Siskiyo and Inyo(but this is not reflected in our plot)because although Nevada
+  scored higher points,the higher score was established from higher renters ratio
+  and project costs, rather than the 3 criteria we laid emphasis on.   
+ 
+
