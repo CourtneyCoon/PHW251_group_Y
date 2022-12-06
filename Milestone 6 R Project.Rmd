@@ -501,22 +501,6 @@ second-rank priorities - Lake, Nevada, and Siskiyou.
 
 
  **Discussion**
- Based upon our inital interpretation of data ,we were able to differentiate 8 
- counties that would benefit from greater healthcare funding: Amador,Calveras, 
- Tuolumne,Siskiyou,,Plumus, Inyo,El Dorado and Lake Counties. We initially 
- established 5 criteria during our analysis including chronic disease mortality,
- median age, population density, total cost projects and renter's ratio. 
- Based upon our initial plot, we narrowed the above counties to 5 ,placing greater 
- weight on mortality, age and population density.We placed less significance 
- on renters ratio and project costs, with the assumption that higher median age 
- are more likely to be owners rather than renters and cost allocation is more 
- likely to be directed to those counties with greater healthcare needs.
- Based upon the above , we narrowed our county allocation to the following:
-  Tuolumne, Amador, Calaveras, Siskiyou,and Lake Counties. (5 counties). 
-  Both out plot and table are reflecting relatively similar data, other than 
-  1 variation.In our analytical data table, Nevada county ranks higher than
-  Siskiyo and Inyo(but this is not reflected in our plot)because although Nevada
-  scored higher points,the higher score was established from higher renters ratio
-  and project costs, rather than the 3 criteria we laid emphasis on.   
+ Based upon our initial interpretation of data, we were able to differentiate between 8 counties that would benefit from greater healthcare funding: Amador, Calaveras, Tuolumne, Siskiyou, Plumas, Inyo, El Dorado, and Lake Counties. We initially established five criteria during our analysis:  chronic disease mortality, median age, population density, total spending on previous projects, and the percent of renter occupied units for each county. Based on our initial plot, we narrowed the above counties to 5, placing greater weight on mortality, median age, and population density. We placed less significance on renters ratio and project costs, with the assumption that higher median age is more likely to be owners rather than renters and cost allocation is more likely to be directed to those counties with greater healthcare needs. Based on the above, we narrowed our county allocation to the following: Tuolumne, Amador, Calaveras, Siskiyou, and Lake Counties. (5 counties). Both our plot and table are reflecting relatively similar data, other than one variation. In our analytical data table, Nevada county ranks higher than Siskiyou and Inyo (but this is not reflected in our plot) because although Nevada scored higher points, the higher score was established from a higher renters ratio and project costs, rather than the 3 criteria we emphasized.     
  
 
