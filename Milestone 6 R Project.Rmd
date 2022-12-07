@@ -1,7 +1,7 @@
 ---
 title: "R Project Milestone 6"
 author: "Moyra Rasheed, Courtney Coon, Jarett Maycott"
-date: '2022-11-28'
+date: '2022-12-7'
 output:
   pdf_document: default
   html_document: default
@@ -87,8 +87,6 @@ colnames(mort_data) <- str_to_lower(colnames(mort_data))
 ## filter by 'strata_name' as 'total_population'
 mort_sub<-mort_data%>%
   filter(strata_name=="Total Population")
-## Note: We kept occurrence and residence data because it's a metric of overall 
-## population load at the hospital
 
 ## replace NAs with zeros
 mort_sub <- mort_sub %>% mutate(count = ifelse(is.na(count), 0, count))
@@ -231,11 +229,12 @@ best targets for the development fund proposals.
 
 
 # **Methods**
-### **Data Sources**
+## **Data Sources**
 To make recommendations on target counties, we used variables from three 
 open-access, State of California data sources which are described below.
 
-#### *[California demographics by County](https://github.com/PHW290/phw251_projectdata/blob/main/ca_county_demographic.csv)*
+### *California demographics by County* [(hyperlink)](https://github.com/PHW290/phw251_projectdata/blob/main/ca_county_demographic.csv)
+
 Includes data on population characteristics by county including average 
 population density, counts by race/ethnicity, sex, median age, and housing data.
 
@@ -247,11 +246,10 @@ Data was collected in 2012.
 
 To prepare the data, we:
 
-1. Data cleaning
+1. Data cleaning and filtering
   + make "County" the first (left-most) column in the data set for merging
-2. Data filtering
   + subset data to only include needed data
-3. Data summarizing
+2. Data summarizing
   + *NEW VARIABLE*: categorize Median Age into "High Priority" (counties with Median Age above the third quantile), "Medium Priority" (counties with Median Age between the first and third quantiles), and "Low Priority" (counties with Median Age below the first quantile)
   + *NEW VARIABLE*: categorize Population per Square Mile (hereafter Population Density) into "High Priority" (counties with Population Density above the third quantile), "Medium Priority" (counties with Population Density between the first and third quantiles), and "Low Priority" (counties with Population Density below the first quantile)
   + *NEW VARIABLE*: create ratio of renting households as a fraction of total households.
@@ -259,7 +257,8 @@ To prepare the data, we:
 
 
 
-#### *[California Department of Public Health Care: Death Profiles by County](https://data.ca.gov/dataset/death-profiles-by-county)*
+### *California Department of Public Health Care: Death Profiles by County* [(hyperlink)](https://data.ca.gov/dataset/death-profiles-by-county)
+
 Includes data on mortality events stratified by age, sex, race, hospital 
 department, and residence status of the deceases relative to the hospital where
 the mortality event occurred.
@@ -272,21 +271,22 @@ The data set contains data from 2014 through 2020.
 
 To prepare the data, we:
 
-1. Data cleaning
+1. Data cleaning and filtering
   + made all column names lowercase
   + replaced NAs with zeros, as instructed
-2. Data filtering
   + filtered data in "strata_name" to only include data about the Total Population (removed age, sex, race and other stratifiers)
   + filtered out non-chronic diseases (all cause, assault, accidents, influenza and self-harm)
   + removed data from 2014
-3. Data summarizing
+  + Note: We kept occurrence and residence data because it's a metric of overall population load at the hospital and we wanted to count both residents that used the hospital as well as individuals from outside the county that visited the hospital
+2. Data summarizing
   + *NEW VARIABLE*: sum all chronic disease mortality events by county (both occurrence and residence data)
   + *NEW VARIABLE*: [after merging data sets] divide summed chronic disease mortality by average population size (from the demographic data set) to create a rate of chronic disease mortality per person for each county
   + *NEW VARIABLE*: categorize Chronic Disease Mortality Rates (hereafter Mortality) into "High Priority" (counties with Mortality above the third quantile), "Medium Priority" (counties with Mortality between the first and third quantiles), and "Low Priority" (counties with Mortality below the first quantile)
 
 
 
-#### *[Department of Health Care Access and Information: Total Construction Cost of Healthcare Projects](https://data.ca.gov/dataset/total-construction-cost-of-healthcare-projects)*
+### *Department of Health Care Access and Information: Total Construction Cost of Healthcare Projects* [(hyperlink)](https://data.ca.gov/dataset/total-construction-cost-of-healthcare-projects)
+
 Includes number of projects and total spending on hospital projects funded by 
 Department of Health Care Access and Information (HCAI) by county, date, and
 project status ("in review", "pending construction", "in construction" and "in
@@ -300,68 +300,29 @@ The original data set contains data from 10-14-2013 through 08-11-2022.
 
 To prepare the data, we:
 
-1. Data cleaning
+1. Data cleaning and filtering
   + made all column names lowercase
   + replaced spaces with underscores
   + removed the numbers in front of the County names
   + removed dollar signs from Total Costs 
   + changed date format
-2. Data filtering
   + removed projects listed as "in review" because we wanted to prioritize locations with the fewest projects that were at any stage of completion
   + removed data from 2013 and 2014 to match other available data
-3. Data summarizing
+2. Data summarizing
   + average Total Costs in each category for each county to reduce over-counting 
   + *NEW VARIABLE*: sum the Total Costs over the 4 categories ('in closure', 'in construction', or 'pending construction') for each county
   + *NEW VARIABLE*: categorize Total Costs into "High Priority" (counties with Total Costs below the first quantile), "Medium Priority" (counties with Total Costs between the first and third quantiles), and "Low Priority" (counties with Total Costs above the third quantile)
 
-### **Analytic methods**
-We decided to approach the ranking of counties with two techniques to examine 
-the robustness of our final recommendations. Our first approach was to use two 
-scatterplots that build off each other. Plot 1 has just the 3 demographic 
-variables of interest: fraction of renters, median age of the residents, and 
-population density. For Plot 2, we collapsed the demographic data into a single 
-*NEW VARIABLE* by coding giving 2 points for values identified as "high 
-priority," 1 point for values identified as "medium priority" and 0 points for 
-"low priority" values for each county. For example, Amador County is a high 
-priority in regards to the median age and population density of its residents 
-(2 points for each variable), but a low priority based on fraction of renters 
-(0 points), for a total demographic ranking score of 4 points. This new
-variable was used to color code the dots in Plot 2 where we graph Previous 
-Funding and Chronic Disease Mortality Rate. Plot 2 highlights the counties that 
-we would consider recommending for future funding because it includes all 5 
-variables of interest.
+## **Analytic methods**
+We decided to approach the ranking of counties with two techniques to examine the robustness of our final recommendations. Our first approach was to use two scatterplots that build off each other. Plot 1 has just the 3 demographic variables of interest: fraction of renters, median age of the residents, and population density. For Plot 2, we collapsed the demographic data into a single *NEW VARIABLE* by coding giving 2 points for values identified as "high priority," 1 point for values identified as "medium priority" and 0 points for "low priority" values for each county. For example, Amador County is a high priority in regards to the median age and population density of its residents (2 points for each variable), but a low priority based on fraction of renters (0 points), for a total demographic ranking score of 4 points. This new variable was used to color code the dots in Plot 2 where we graph Previous Funding and Chronic Disease Mortality Rate. Plot 2 highlights the counties that we would consider recommending for future funding because it includes all 5 variables of interest.
 
-Our second approach was to use a table with a *NEW VARIABLE* to rank the 
-counties on all 5 variables of interest simultaneously. The ranking variable 
-uses a similar method as above except that the point values were not universal. 
-We decided that the Chronic Disease Mortality Rate, Population Density and 
-Median Age were more valuable than the Renter Ratios and Previous Investments 
-because (1) Renter Ratio is inversely correlated with Median Age (the older a 
-person gets, the more likely they are to own a home) and (2) because we believe 
-it is more equitable to fund hospitals that appear to be in need of funding 
-regardless of prior funding. For the 3 "more valuable" variables, we gave 4 
-points for "high priority" values, 2 point "medium priority" values, and 0 
-points for "low priority" values. For the 2 less important variables, we gave 2 
-points to values identified as "high priority," 1 point for values identified as
-"medium priority" and 0 points for "low priority" values for each county. For 
-example, Siskiyou County is a high priority based on median age (4 points), 
-population density (4 more points) and chronic disease mortality rates (4 
-points). It was a medium priority based on total previous investment (1 point) 
-and a low priority based on fraction of renters (0 points) for a total ranking 
-score of 13 points. Counties were then ranked on their total ranking score.
+Our second approach was to use a table with a *NEW VARIABLE* to rank the counties on all 5 variables of interest simultaneously. The ranking variable uses a similar method as above except that the point values were not universal. We decided that the Chronic Disease Mortality Rate, Population Density and Median Age were more valuable than the Renter Ratios and Previous Investments because (1) Renter Ratio is inversely correlated with Median Age (the older a person gets, the more likely they are to own a home) and (2) because we believe it is more equitable to fund hospitals that appear to be in need of funding regardless of prior funding. For the 3 "more valuable" variables, we gave 4 points for "high priority" values, 2 point "medium priority" values, and 0 points for "low priority" values. For the 2 less important variables, we gave 2 points to values identified as "high priority," 1 point for values identified as "medium priority" and 0 points for "low priority" values for each county. For example, Siskiyou County is a high priority based on median age (4 points), population density (4 more points) and chronic disease mortality rates (4 points). It was a medium priority based on total previous investment (1 point) and a low priority based on fraction of renters (0 points) for a total ranking score of 13 points. Counties were then ranked on their total ranking score.
 
 
 # **Results**
 
-
 ### *Figure 1:* High priority counties based on demographic data only 
-Priority is given to counties with: (1) renter ratios above the median of all
-counties (median = 39%), (2) median population age above the median for all 
-counties (median = 37 years old), and (3) population densities below the third
-quantile for all counties (High priority is below the 1st quantile = 26 people 
-per square mile; Low priority is above the 3rd quantile = 333 people per square 
-mile). Each dot represents a county in California. Counties that are named on 
-the figure are those meeting all of the high priority demographic criteria.
+Priority is given to counties with: (1) renter ratios above the median of all counties (median = 39%), (2) median population age above the median for all counties (median = 37 years old), and (3) population densities below the third quantile for all counties (High priority is below the 1st quantile = 26 people per square mile; Low priority is above the 3rd quantile = 333 people per square mile). Each dot represents a county in California. Counties that are named on the figure are those meeting all of the high priority demographic criteria.
 
 ```{r echo=FALSE, results=TRUE}
 ## renter ratio median = 39%; 3rd quantile=0.4247
@@ -391,14 +352,8 @@ and lower population density",
 
 \newpage
 ### *Figure 2:* High priority counties using all variables of interest. 
-Color coding is based on the demographic data presented in Plot 1. A County 
-with higher priority demographic values received a higher score (score of 4 has 
-the highest priority). Also in the Plot is the total dollars previously invested
-in prior projects with higher priority for counties below the median previous 
-investment (log($5,961,782,208) = 22.50864) on the x-axis, and, on the y-axis, 
-rate of chronic disease mortality events between 2015-2020, with higher priority 
-counties having higher than the median rates of chronic disease mortality 
-(median = 0.07 cases of mortality per person).
+Color coding is based on the demographic data presented in Plot 1. A County with higher priority demographic values received a higher score (score of 4 has the highest priority). Also in the Plot is the total dollars previously invested in prior projects with higher priority for counties below the median previous investment (log($5,961,782,208) = 22.50864) on the x-axis, and, on the y-axis, rate of chronic disease mortality events between 2015-2020, with higher priority counties having higher than the median rates of chronic disease mortality (median = 0.07 cases of mortality per person).
+
 
 ```{r echo=FALSE, results=TRUE}
 # make data set with continuous data and ranking factor for the demographic 
@@ -453,8 +408,8 @@ Tuolumne, Amador, Calaveras, Plumas, and Inyo would be prioritized).
 
 
 \newpage
-### *Table:* Top 16 counties ranked by need for OSHPD projects  
-Overview of the top 16 counties based on their ranking priorities for OSHPD project need for each variable. Priority categories 'Low', 'Medium', and 'High' are assigned based on quantile position for each county. The six counties highlighted in yellow are the counties with the highest priority need accounting for each variable. Rankings were determined by assessing priority categories per county where more 'high priority' designations increases overall county ranking.      
+### *Table:* Top 16 counties ranked by need for HCAI projects  
+Overview of the top 16 counties based on their ranked priority scores for HCAI project need for each variable. Variables were categorized into 'Low', 'Medium', and 'High' based on quantile position for each county with the first 3 variables in the table given higher priority as compared to the last two. Rankings were determined by assessing priority categories per county where more 'high priority' designations increases overall county ranking. The 6 counties highlighted in yellow are those with the greatest need for funding, accounting for all variables.      
 ```{r echo=FALSE, results=TRUE}
 table_col_order <- c("county", "relative_chronic_dis_mort","pop12_sqmi",  
                      "med_age", "renter_ratio","summed_total_cost",
@@ -484,9 +439,9 @@ table_printed = kable(table,
         align='lrlrlrlrlrlc')%>%
    kable_styling(latex_options="scale_down")
 add_header_above(table_printed, 
-                 c("County" = 1,"Chronic disease mortality burden" = 2,
-                      "Median age of population" = 2,
-                      "Population desnity"= 2,
+                 c("County" = 1,"Chronic disease mortality rate" = 2,
+                      "Median population age" = 2,
+                      "Population density"= 2,
                       "Previous spending on projects" = 2,
                       "% of population that are renters" = 2,
                       "County Rank" = 1
@@ -494,13 +449,15 @@ add_header_above(table_printed,
 row_spec(1:6, bold = TRUE,  background = 'yellow')
 ```
 
-The ranking variable described in the Analytic Methods identifies 3 Counties as
-top priorities - Amador, Calaveras, and Tuolumne - and 3 more Counties as 
-second-rank priorities - Lake, Nevada, and Siskiyou.
+The ranking variable described in the Analytic Methods identifies 3 Counties as top priorities - Amador, Calaveras, and Tuolumne - and 3 more Counties as second-rank priorities - Lake, Nevada, and Siskiyou.
 
 
 
- **Discussion**
- Based upon our initial interpretation of data, we were able to differentiate between 8 counties that would benefit from greater healthcare funding: Amador, Calaveras, Tuolumne, Siskiyou, Plumas, Inyo, El Dorado, and Lake Counties. We initially established five criteria during our analysis:  chronic disease mortality, median age, population density, total spending on previous projects, and the percent of renter occupied units for each county. Based on our initial plot, we narrowed the above counties to 5, placing greater weight on mortality, median age, and population density. We placed less significance on renters ratio and project costs, with the assumption that higher median age is more likely to be owners rather than renters and cost allocation is more likely to be directed to those counties with greater healthcare needs. Based on the above, we narrowed our county allocation to the following: Tuolumne, Amador, Calaveras, Siskiyou, and Lake Counties. (5 counties). Both our plot and table are reflecting relatively similar data, other than one variation. In our analytical data table, Nevada county ranks higher than Siskiyou and Inyo (but this is not reflected in our plot) because although Nevada scored higher points, the higher score was established from a higher renters ratio and project costs, rather than the 3 criteria we emphasized.     
+# **Discussion**
+We used five variables as criteria during our analysis: chronic disease mortality rate, median age, population density, total spending on previous projects, and the percent of renter occupied units for each county. In our first analysis (2 sequential scatter plots) we identified 8 counties that would benefit from greater healthcare funding. We narrowed our choice to 5 counties by placing the greatest weight on chronic disease mortality: Tuolumne, Amador, Calaveras, Siskiyou, and Lake Counties. 
+
+In our second analysis (data table), we placed greater importance on chronic disease mortality rate, median age and population density for reasons describe in the methods. The table identified 6 counties to prioritize for funding, 5 of which are the same as found by the graphical analysis. 
+
+Taking both methods into consideration, we are recommending funding allocation to the following 5 counties: Tuolumne, Amador, Calaveras, Siskiyou, and Lake Counties. If funding is made available beyond 5 counties, we recommend that Nevada, Plumas and Inyo Counties should also be considered.
  
 
